@@ -1,5 +1,18 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "outputDirectory": "website",
-  "cleanUrls": true
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/", "destination": "/website/index.html" },
+    { "source": "/index.html", "destination": "/website/index.html" },
+    { "source": "/docs", "destination": "/website/docs.html" },
+    { "source": "/docs.html", "destination": "/website/docs.html" },
+    { "source": "/documentation", "destination": "/website/docs.html" },
+    { "source": "/privacy", "destination": "/website/privacy.html" },
+    { "source": "/privacy.html", "destination": "/website/privacy.html" },
+    { "source": "/terms", "destination": "/website/terms.html" },
+    { "source": "/terms.html", "destination": "/website/terms.html" },
+    { "source": "/style.css", "destination": "/website/style.css" },
+    { "source": "/app.js", "destination": "/website/app.js" },
+    { "source": "/assets/:match*", "destination": "/website/assets/:match*" }
+  ]
 }
