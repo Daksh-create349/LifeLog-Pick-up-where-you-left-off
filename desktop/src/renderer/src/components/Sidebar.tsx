@@ -9,7 +9,6 @@ import {
   Search,
   Sun,
   Moon,
-  Layers,
 } from 'lucide-react';
 import { NavView, ConnectionStatus } from '../types';
 
@@ -52,8 +51,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Wordmark Branding */}
         <div className="px-5 py-3">
           <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-forest text-white flex items-center justify-center shadow-subtle">
-              <Layers size={16} strokeWidth={2.25} />
+            <div className="w-7 h-7 rounded-lg overflow-hidden flex items-center justify-center shadow-subtle bg-white dark:bg-surface-dark border border-border-light dark:border-border-dark p-0.5">
+              <img src="/logo.png" alt="LIFELOG" className="w-full h-full object-contain" />
             </div>
             <div>
               <div className="text-sm font-bold tracking-tight text-primary-light dark:text-primary-dark font-mono leading-none">

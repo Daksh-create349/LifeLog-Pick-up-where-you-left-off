@@ -12,3 +12,6 @@
 *.out
 *.test
 coverage.txt
+
+# Website packaged releases (>100MB; hosted on GitHub Releases)
+/website/assets/downloads/

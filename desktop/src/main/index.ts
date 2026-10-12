@@ -1,4 +1,4 @@
-import { app, BrowserWindow, Menu } from 'electron';
+import { app, BrowserWindow, Menu, session, shell } from 'electron';
 import path from 'path';
 import { DaemonSupervisor } from './daemon';
 import { setupIpcBridge } from './bridge';
@@ -53,6 +53,7 @@ if (!gotLock) {
 
 function createWindow(): void {
   const isDev = process.env.NODE_ENV === 'development' || !app.isPackaged;
+  const iconPath = path.resolve(__dirname, '../../assets/icon.png');
 
   mainWindow = new BrowserWindow({
     width: 1200,
@@ -60,6 +61,7 @@ function createWindow(): void {
     minWidth: 920,
     minHeight: 620,
     title: 'LIFELOG',
+    icon: fsExists(iconPath) ? iconPath : undefined,
     titleBarStyle: 'hiddenInset',
     trafficLightPosition: { x: 16, y: 14 },
     backgroundColor: '#FBFBFA',
@@ -68,9 +70,41 @@ function createWindow(): void {
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true,
+      webSecurity: true,
+      allowRunningInsecureContent: false,
     },
     show: false,
   });
+
+  // Set macOS dock icon if available
+  if (process.platform === 'darwin' && app.dock && fsExists(iconPath)) {
+    try {
+      app.dock.setIcon(iconPath);
+    } catch {
+      // Ignore if dock icon cannot be set
+    }
+  }
+
+  // Security: deny all external navigation inside main window
+  mainWindow.webContents.on('will-navigate', (event, url) => {
+    if (!url.startsWith('file://') && !url.startsWith('http://localhost:5173')) {
+      event.preventDefault();
+    }
+  });
+
+  // Security: handle popup / external window requests safely
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    if (url.startsWith('https://') || url.startsWith('http://')) {
+      shell.openExternal(url);
+    }
+    return { action: 'deny' };
+  });
+
+  // Security: deny all permission requests (camera, microphone, geolocation, notifications)
+  session.defaultSession.setPermissionRequestHandler((_webContents, _permission, callback) => {
+    callback(false);
+  });
+  session.defaultSession.setPermissionCheckHandler(() => false);
 
   mainWindow.once('ready-to-show', () => {
     mainWindow?.show();

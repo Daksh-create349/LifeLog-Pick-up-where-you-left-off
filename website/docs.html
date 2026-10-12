@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Documentation — LIFELOG</title>
+  <meta name="description" content="Official documentation, CLI reference, architecture guide, and setup instructions for LIFELOG." />
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="brand">
+        <img src="assets/logo.png" alt="LIFELOG Logo" class="brand-logo" />
+        <span class="brand-text">LIFELOG</span>
+        <span class="brand-badge">DOCS</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="index.html#download-platforms" class="nav-link">Download</a></li>
+        <li><a href="docs.html" class="nav-link" style="color: var(--forest); font-weight: 600;">Documentation</a></li>
+        <li><a href="privacy.html" class="nav-link">Privacy</a></li>
+        <li><a href="terms.html" class="nav-link">Terms</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="https://github.com/Daksh-create349/LifeLog-Pick-up-where-you-left-off.git" target="_blank" rel="noreferrer" class="btn btn-secondary btn-sm">GitHub</a>
+        <a href="assets/downloads/LifeLog-0.2.0-arm64.dmg" class="btn btn-primary btn-sm">Download App</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Docs Container -->
+  <div class="container">
+    <div class="docs-layout">
+      <!-- Sidebar Navigation -->
+      <aside class="docs-sidebar">
+        <div class="docs-nav-group">
+          <div class="docs-nav-title">Getting Started</div>
+          <ul class="docs-nav-links">
+            <li><a href="#overview" class="docs-nav-link active">Overview</a></li>
+            <li><a href="#quickstart" class="docs-nav-link">Quickstart (3 Steps)</a></li>
+            <li><a href="#installation" class="docs-nav-link">Installation</a></li>
+          </ul>
+        </div>
+
+        <div class="docs-nav-group">
+          <div class="docs-nav-title">CLI Reference</div>
+          <ul class="docs-nav-links">
+            <li><a href="#cli-init" class="docs-nav-link">lifelog init &amp; status</a></li>
+            <li><a href="#cli-watch" class="docs-nav-link">lifelog watch &amp; events</a></li>
+            <li><a href="#cli-git" class="docs-nav-link">lifelog git scan &amp; status</a></li>
+            <li><a href="#cli-terminal" class="docs-nav-link">lifelog terminal record</a></li>
+            <li><a href="#cli-resume" class="docs-nav-link">lifelog resume &amp; package</a></li>
+            <li><a href="#cli-search" class="docs-nav-link">lifelog search &amp; timeline</a></li>
+            <li><a href="#cli-checkpoint" class="docs-nav-link">lifelog checkpoint</a></li>
+            <li><a href="#cli-daemon" class="docs-nav-link">lifelog daemon</a></li>
+          </ul>
+        </div>
+
+        <div class="docs-nav-group">
+          <div class="docs-nav-title">Desktop Application</div>
+          <ul class="docs-nav-links">
+            <li><a href="#desktop-overview" class="docs-nav-link">Electron Shell &amp; Bridge</a></li>
+            <li><a href="#app-tracking" class="docs-nav-link">Native App Tracking</a></li>
+            <li><a href="#system-activity" class="docs-nav-link">System Sleep &amp; Lock</a></li>
+            <li><a href="#retention-privacy" class="docs-nav-link">Retention &amp; Deletion</a></li>
+          </ul>
+        </div>
+
+        <div class="docs-nav-group">
+          <div class="docs-nav-title">Architecture</div>
+          <ul class="docs-nav-links">
+            <li><a href="#schema-v9" class="docs-nav-link">Schema v9 &amp; Migrations</a></li>
+            <li><a href="#security-model" class="docs-nav-link">Security Model (0600 UDS)</a></li>
+            <li><a href="#troubleshooting" class="docs-nav-link">Troubleshooting &amp; FAQ</a></li>
+          </ul>
+        </div>
+      </aside>
+
+      <!-- Main Docs Content -->
+      <main class="docs-content">
+        <h1 id="overview">LIFELOG Documentation</h1>
+        <p>
+          LIFELOG is a local-first computer memory engine for macOS designed to help software engineers pick up exactly where they left off. It runs as both a lightweight Go CLI and an Electron desktop application.
+        </p>
+
+        <h2 id="quickstart">Quickstart Guide</h2>
+        <p>Get started in three terminal commands:</p>
+
+        <h3>1. Initialize LIFELOG</h3>
+        <p>Creates your local data directory in <code>~/Library/Application Support/LifeLog</code> with restricted <code>0700</code> permissions and sets up SQLite schema v9:</p>
+        <pre><code>lifelog init</code></pre>
+
+        <h3>2. Start Monitoring a Directory</h3>
+        <p>Recursively monitors directory modifications without inspecting file contents:</p>
+        <pre><code>lifelog watch /path/to/my-project</code></pre>
+
+        <h3>3. Generate a Resumption Report</h3>
+        <p>When returning to work after hours or days away, generate an instant context synthesis:</p>
+        <pre><code>lifelog resume</code></pre>
+
+        <h2 id="installation">Installation Guide</h2>
+
+        <h3>macOS Desktop Application (Apple Silicon M1/M2/M3/M4)</h3>
+        <p>Download the standalone <code>.dmg</code> installer:</p>
+        <p><a href="assets/downloads/LifeLog-0.2.0-arm64.dmg" class="btn btn-primary btn-sm">Download LifeLog-0.2.0-arm64.dmg (117 MB)</a></p>
+        <p>Drag <code>LifeLog.app</code> into your <code>/Applications</code> folder. On first launch, if macOS Gatekeeper prompts for an unidentified developer, right-click the app and choose <strong>Open</strong>, or run:</p>
+        <pre><code>xattr -cr /Applications/LifeLog.app</code></pre>
+
+        <h3>Homebrew CLI Installation</h3>
+        <pre><code>brew install lifelog</code></pre>
+
+        <h3>Source Build (Go 1.22+)</h3>
+        <pre><code>git clone https://github.com/Daksh-create349/LifeLog-Pick-up-where-you-left-off.git
+cd LifeLog
+CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o lifelog main.go
+./lifelog doctor</code></pre>
+
+        <h2 id="cli-reference">CLI Command Reference (All 17 Commands)</h2>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Command</th>
+              <th>Description</th>
+              <th>Key Flags</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>lifelog init</code></td>
+              <td>Initializes local directory and SQLite schema v9</td>
+              <td><code>--force</code></td>
+            </tr>
+            <tr>
+              <td><code>lifelog status</code></td>
+              <td>Displays operational state, socket health, and record counts</td>
+              <td><code>--json</code></td>
+            </tr>
+            <tr>
+              <td><code>lifelog doctor</code></td>
+              <td>Runs diagnostic health checks on storage, permissions, and observers</td>
+              <td><code>--verbose</code></td>
+            </tr>
+            <tr>
+              <td><code>lifelog watch &lt;dir&gt;</code></td>
+              <td>Recursively polls directory for file metadata modifications</td>
+              <td><code>--interval 1s</code></td>
+            </tr>
+            <tr>
+              <td><code>lifelog events</code></td>
+              <td>Queries chronological filesystem events</td>
+              <td><code>--limit 20</code>, <code>--since 24h</code></td>
+            </tr>
+            <tr>
+              <td><code>lifelog git scan &lt;dir&gt;</code></td>
+              <td>Scans and indexes local Git repository branch and commit state</td>
+              <td><code>--all</code></td>
+            </tr>
+            <tr>
+              <td><code>lifelog git status &lt;dir&gt;</code></td>
+              <td>Shows tracked working-tree changes without remote queries</td>
+              <td><code>--json</code></td>
+            </tr>
+            <tr>
+              <td><code>lifelog terminal record -- &lt;cmd&gt;</code></td>
+              <td>Runs and indexes command with automatic secret sanitization</td>
+              <td>None</td>
+            </tr>
+            <tr>
+              <td><code>lifelog search &lt;query&gt;</code></td>
+              <td>Executes FTS5 BM25 search across files, Git, terminal, and apps</td>
+              <td><code>--domain app</code>, <code>--limit 10</code></td>
+            </tr>
+            <tr>
+              <td><code>lifelog timeline</code></td>
+              <td>Streams unified chronological timeline of all activity domains</td>
+              <td><code>--since 48h</code></td>
+            </tr>
+            <tr>
+              <td><code>lifelog resume</code></td>
+              <td>Synthesizes last work session into an actionable resumption report</td>
+              <td><code>--gap 30m</code>, <code>--json</code></td>
+            </tr>
+            <tr>
+              <td><code>lifelog package</code></td>
+              <td>Generates portable Markdown or JSON resumption package bundle</td>
+              <td><code>--out report.md</code></td>
+            </tr>
+            <tr>
+              <td><code>lifelog checkpoint create</code></td>
+              <td>Takes an immutable historical snapshot of current computer state</td>
+              <td><code>--label "Sprint 2 finish"</code></td>
+            </tr>
+            <tr>
+              <td><code>lifelog projects</code></td>
+              <td>Discovers active and dormant projects across all tracked domains</td>
+              <td><code>--json</code></td>
+            </tr>
+            <tr>
+              <td><code>lifelog export</code></td>
+              <td>Exports user activity dataset with versioned JSON schema</td>
+              <td><code>--out export.json</code></td>
+            </tr>
+            <tr>
+              <td><code>lifelog daemon</code></td>
+              <td>Runs background JSON-RPC 2.0 server over Unix domain socket</td>
+              <td><code>--socket &lt;path&gt;</code></td>
+            </tr>
+            <tr>
+              <td><code>lifelog version</code></td>
+              <td>Prints build version, git commit, and Go compiler version</td>
+              <td>None</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h2 id="desktop-overview">Desktop Application Architecture</h2>
+        <p>
+          The desktop app uses Electron with React, Tailwind CSS, and Lucide icons. It communicates with the Go daemon through a Unix Domain Socket (UDS) located at <code>~/Library/Application Support/LifeLog/lifelog.sock</code>.
+        </p>
+        <p>
+          Every socket connection requires an ephemeral token handshake. The Electron main process spawns the Go daemon with the token passed securely in an environment variable, preventing any unauthorized local processes from connecting.
+        </p>
+
+        <h2 id="app-tracking">Native macOS Application Tracking</h2>
+        <p>
+          Tracks the active foreground application name and bundle identifier using macOS <code>NSWorkspace.shared.frontmostApplication</code> and <code>NSWorkspaceDidActivateApplicationNotification</code>.
+        </p>
+        <ul>
+          <li><strong>No Accessibility permissions required:</strong> Pure public macOS APIs.</li>
+          <li><strong>Zero window title capture:</strong> Window titles are explicitly excluded for privacy.</li>
+          <li><strong>Zero keystrokes:</strong> No global event taps, keyloggers, or text inspection.</li>
+          <li><strong>Session duration clamping:</strong> Automatically closes orphan sessions upon sleep or reboot.</li>
+        </ul>
+
+        <h2 id="system-activity">System Activity Tracking</h2>
+        <p>
+          Tracks computer lifecycle transitions via native macOS notification hooks:
+        </p>
+        <ul>
+          <li><code>system_sleep</code>: Emitted when the Mac enters sleep mode. Active sessions are automatically finalized.</li>
+          <li><code>system_wake</code>: Emitted when the Mac wakes up. Fresh foreground tracking resumes.</li>
+          <li><code>system_lock</code>: Emitted via <code>DistributedNotificationCenter</code> when the screen locks.</li>
+          <li><code>system_unlock</code>: Emitted when the user logs back in.</li>
+        </ul>
+
+        <h2 id="retention-privacy">Data Management &amp; Retention</h2>
+        <p>
+          LIFELOG provides automated retention cleanup via Settings &gt; Data Management. Users can configure cleanup presets:
+        </p>
+        <ul>
+          <li><strong>7 Days</strong>: Ideal for high-turnover staging machines.</li>
+          <li><strong>30 Days</strong>: Recommended for daily development work.</li>
+          <li><strong>90 Days / 365 Days</strong>: Extended retention for quarterly reviews.</li>
+          <li><strong>Keep Forever</strong>: Never expires records.</li>
+        </ul>
+        <p>
+          Cleanup runs in bounded database transactions and deletes associated entries from the FTS5 search index via database triggers, guaranteeing no dangling records.
+        </p>
+
+        <h2 id="security-model">Security Hardening Model</h2>
+        <ul>
+          <li><strong>Restricted File Permissions:</strong> Data directory created with <code>0700</code>; databases and exports created with <code>0600</code>.</li>
+          <li><strong>Timing Attack Defense:</strong> Auth tokens are verified using <code>crypto/subtle.ConstantTimeCompare</code>.</li>
+          <li><strong>Sandboxed Electron Shell:</strong> Context isolation enabled, Node.js integration disabled, external navigation prevented.</li>
+          <li><strong>No Remote Sockets:</strong> The daemon only binds to local Unix Domain Sockets. No network attack surface.</li>
+        </ul>
+      </main>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <div>&copy; 2026 LIFELOG Authors. Released under MIT License.</div>
+        <div style="display: flex; gap: 20px;">
+          <a href="index.html" style="color: inherit; text-decoration: none;">Home</a>
+          <a href="privacy.html" style="color: inherit; text-decoration: none;">Privacy Policy</a>
+          <a href="terms.html" style="color: inherit; text-decoration: none;">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -37,6 +37,7 @@ npx @electron/packager . "LifeLog" \
   --arch=arm64 \
   --out=dist-package \
   --overwrite \
+  --icon="assets/icon" \
   --app-bundle-id="com.lifelog.desktop" \
   --app-version="0.2.0" \
   --build-version="0.2.0" \
@@ -59,14 +60,16 @@ cp "$REPO_ROOT/lifelog" "$RESOURCES_BIN/lifelog"
 cp "$REPO_ROOT/bin/lifelog-app-observer" "$RESOURCES_BIN/lifelog-app-observer"
 chmod 755 "$RESOURCES_BIN/lifelog" "$RESOURCES_BIN/lifelog-app-observer"
 
-# 6. Verify packaged bundle contents
-echo "==> 6. Verifying packaged application bundle..."
-test -f "$APP_BUNDLE/Contents/MacOS/LifeLog"
-test -f "$APP_BUNDLE/Contents/Resources/bin/lifelog"
-test -f "$APP_BUNDLE/Contents/Resources/bin/lifelog-app-observer"
-test -f "$APP_BUNDLE/Contents/Resources/app.asar"
-test -f "$APP_BUNDLE/Contents/Info.plist"
-echo "    Bundle verification passed!"
+# 6. Clean extended attributes and sign all embedded binaries and bundle
+echo "==> 6. Signing bundle binaries and verifying signature integrity..."
+xattr -cr "$APP_BUNDLE"
+codesign --force --sign - "$RESOURCES_BIN/lifelog"
+codesign --force --sign - "$RESOURCES_BIN/lifelog-app-observer"
+codesign --force --deep --options runtime --sign - "$APP_BUNDLE"
+
+# Verify signature validity
+codesign -vvv --deep --strict "$APP_BUNDLE"
+echo "    Bundle signature verification passed (valid on disk)!"
 
 # 7. Create DMG distributable
 echo "==> 7. Creating standalone DMG installer..."
@@ -81,6 +84,12 @@ ZIP_PATH="$REPO_ROOT/desktop/dist-package/LifeLog-0.2.0-macOS-arm64.zip"
 rm -f "$ZIP_PATH"
 (cd "$REPO_ROOT/desktop/dist-package" && zip -r -q -y "LifeLog-0.2.0-macOS-arm64.zip" "LifeLog-darwin-arm64/LifeLog.app")
 echo "    Created ZIP: $ZIP_PATH ($(du -h "$ZIP_PATH" | awk '{print $1}'))"
+
+# 9. Update website downloads
+mkdir -p "$REPO_ROOT/website/assets/downloads"
+cp "$DMG_PATH" "$REPO_ROOT/website/assets/downloads/"
+cp "$ZIP_PATH" "$REPO_ROOT/website/assets/downloads/"
+echo "    Synced DMG and ZIP to website/assets/downloads/"
 
 echo "=========================================="
 echo "Packaging complete!"

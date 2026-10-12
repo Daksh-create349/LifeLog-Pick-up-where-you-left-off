@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — LIFELOG</title>
+  <meta name="description" content="Official local-first privacy policy for LIFELOG. We collect zero cloud telemetry and zero personal content." />
+  <link rel="icon" type="image/png" href="assets/favicon.png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Navigation -->
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a href="index.html" class="brand">
+        <img src="assets/logo.png" alt="LIFELOG Logo" class="brand-logo" />
+        <span class="brand-text">LIFELOG</span>
+        <span class="brand-badge">PRIVACY</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="index.html#download-platforms" class="nav-link">Download</a></li>
+        <li><a href="docs.html" class="nav-link">Documentation</a></li>
+        <li><a href="privacy.html" class="nav-link" style="color: var(--forest); font-weight: 600;">Privacy</a></li>
+        <li><a href="terms.html" class="nav-link">Terms</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="https://github.com/Daksh-create349/LifeLog-Pick-up-where-you-left-off.git" target="_blank" rel="noreferrer" class="btn btn-secondary btn-sm">GitHub</a>
+        <a href="assets/downloads/LifeLog-0.2.0-arm64.dmg" class="btn btn-primary btn-sm">Download App</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="container container-narrow" style="padding-top: 56px; padding-bottom: 96px;">
+    <h1 style="font-size: 2.5rem; font-weight: 800; letter-spacing: -0.025em; margin-bottom: 12px;">Privacy Policy</h1>
+    <div style="font-size: 0.82rem; font-family: monospace; color: var(--text-muted); margin-bottom: 32px;">
+      Effective Date: October 12, 2026 • Policy Version: 2.0 (Local-First Guarantee)
+    </div>
+
+    <div style="background: var(--forest-subtle); border: 1px solid rgba(27, 77, 62, 0.2); border-radius: var(--radius-md); padding: 20px; margin-bottom: 36px;">
+      <strong style="color: var(--forest); display: block; margin-bottom: 6px; font-size: 0.95rem;">The Core LIFELOG Privacy Guarantee:</strong>
+      <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; margin: 0;">
+        LIFELOG is a 100% local-first desktop application and CLI tool. We operate no cloud servers, collect zero remote telemetry, use zero third-party analytics SDKs, and never transmit your computer activity over the Internet. Your data belongs exclusively to you and never leaves your machine.
+      </p>
+    </div>
+
+    <div class="docs-content">
+      <h2>1. Information That Remains Exclusively Local</h2>
+      <p>
+        When you run LIFELOG, activity metadata is observed locally and stored inside your user-specific directory (<code>~/Library/Application Support/LifeLog</code>) in an SQLite database locked with Unix <code>0600</code> permissions.
+      </p>
+      <p>This strictly local metadata includes:</p>
+      <ul>
+        <li><strong>Filesystem Metadata:</strong> File paths, sizes in bytes, modification timestamps, and event types (created, modified, deleted) within explicitly configured monitoring directories.</li>
+        <li><strong>Local Git State:</strong> Local repository paths, active branch names, HEAD commit hashes and commit messages, and uncommitted working-tree file change lists.</li>
+        <li><strong>Sanitized Command Metadata:</strong> When you explicitly execute commands using <code>lifelog terminal record</code>, the command string (with sensitive flags sanitized), working directory, execution timestamp, and exit code are recorded.</li>
+        <li><strong>Active Foreground Application Usage:</strong> Foreground application bundle identifiers (e.g., <code>com.apple.Terminal</code>) and elapsed duration timestamps.</li>
+        <li><strong>System Lifecycle Transitions:</strong> System sleep, wake, screen lock, and screen unlock timestamps.</li>
+      </ul>
+
+      <h2>2. What We Explicitly NEVER Collect or Inspect</h2>
+      <p>
+        LIFELOG is architected around verifiable technical boundaries that prevent snooping:
+      </p>
+      <ul>
+        <li><strong>NO File Contents or Code Diffs:</strong> LIFELOG reads file metadata only (<code>os.FileInfo</code>). It never opens, reads, or indexes the text inside your source code, documents, or keys.</li>
+        <li><strong>NO Terminal Output or Shell History:</strong> LIFELOG never records stdout, stderr, terminal buffers, or shell history files (<code>.zsh_history</code>, <code>.bash_history</code>).</li>
+        <li><strong>NO Keystroke Recording:</strong> LIFELOG contains no keyloggers, event taps, or accessibility keystroke listeners.</li>
+        <li><strong>NO Screenshots or Video:</strong> LIFELOG captures zero screenshots, window thumbnails, or screen recordings.</li>
+        <li><strong>NO Window Title Scraping:</strong> Window titles are explicitly omitted from capture to prevent collecting private document names or sensitive URLs.</li>
+        <li><strong>NO Web Browsing History or URLs:</strong> LIFELOG never reads browser databases, cookies, passwords, URL paths, or query strings.</li>
+        <li><strong>NO Remote Networking or Cloud Sync:</strong> The application contains zero remote network connections, analytics trackers, advertising code, or telemetry beacons.</li>
+      </ul>
+
+      <h2>3. Deterministic Secret Sanitization</h2>
+      <p>
+        Before terminal execution metadata is persisted, our heuristic sanitization engine automatically masks sensitive command flags containing tokens, passwords, bearer credentials, and API keys into <code>[REDACTED]</code>. Calls to sensitive credential management utilities (such as <code>security</code>, <code>op</code>, <code>pass</code>, <code>vault</code>, and <code>ssh-add</code>) are omitted.
+      </p>
+
+      <h2>4. Local Storage and Access Control</h2>
+      <p>
+        All SQLite databases, search indices, and configuration files are written with Unix <code>0600</code> permissions, ensuring that only processes running under your operating system user account can read them. Inter-process communication operates strictly over local Unix Domain Sockets (<code>lifelog.sock</code>) protected by ephemeral cryptographic handshake tokens.
+      </p>
+
+      <h2>5. User Data Portability and Deletion</h2>
+      <p>You maintain complete control over all data recorded by LIFELOG:</p>
+      <ul>
+        <li><strong>Full JSON Export:</strong> You can export your complete activity history at any time via Settings &gt; Export or <code>lifelog export</code> into a documented, versioned JSON format (<code>lifelog-export-v1</code>).</li>
+        <li><strong>Configurable Retention:</strong> You can set automated retention cleanup (7 days, 30 days, 90 days, 365 days, or forever). Expired records and their search index entries are deleted automatically.</li>
+        <li><strong>Granular Deletion:</strong> You can purge specific activity sources or date ranges via Settings &gt; Data Management.</li>
+        <li><strong>Complete Removal:</strong> Deleting the <code>~/Library/Application Support/LifeLog</code> directory permanently eliminates all traces of stored data from your computer.</li>
+      </ul>
+
+      <h2>6. Open Source Verification</h2>
+      <p>
+        LIFELOG is free and open-source software released under the MIT License. The entire Go backend, Swift observer helper, and Electron desktop shell are publicly available on GitHub for independent security and privacy auditing.
+      </p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <div>&copy; 2026 LIFELOG Authors. Released under MIT License.</div>
+        <div style="display: flex; gap: 20px;">
+          <a href="index.html" style="color: inherit; text-decoration: none;">Home</a>
+          <a href="docs.html" style="color: inherit; text-decoration: none;">Documentation</a>
+          <a href="terms.html" style="color: inherit; text-decoration: none;">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

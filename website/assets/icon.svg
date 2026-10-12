@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <radialGradient id="bgGlow" cx="50%" cy="30%" r="70%">
+      <stop offset="0%" stop-color="#142A22" />
+      <stop offset="60%" stop-color="#0B1511" />
+      <stop offset="100%" stop-color="#050907" />
+    </radialGradient>
+    
+    <!-- Outer Border Gradient -->
+    <linearGradient id="borderGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34D399" stop-opacity="0.6" />
+      <stop offset="50%" stop-color="#10B981" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#059669" stop-opacity="0.1" />
+    </linearGradient>
+
+    <!-- Emerald Loop Gradients -->
+    <linearGradient id="primaryLoop" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34D399" />
+      <stop offset="40%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#047857" />
+    </linearGradient>
+
+    <linearGradient id="secondaryLoop" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#6EE7B7" />
+      <stop offset="50%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#065F46" />
+    </linearGradient>
+
+    <linearGradient id="facetHighlight" x1="0%" y1="50%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#A7F3D0" stop-opacity="0.9" />
+      <stop offset="100%" stop-color="#34D399" stop-opacity="0.3" />
+    </linearGradient>
+
+    <!-- Core Crystal Glow -->
+    <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#6EE7B7" />
+      <stop offset="40%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#047857" stop-opacity="0" />
+    </radialGradient>
+
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="16" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+
+    <filter id="crystalShadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.6" />
+    </filter>
+  </defs>
+
+  <!-- macOS Style Squircle Base -->
+  <rect x="24" y="24" width="464" height="464" rx="108" fill="url(#bgGlow)" stroke="url(#borderGlow)" stroke-width="4" />
+  
+  <!-- Subtle Ambient Glow Behind Glyph -->
+  <circle cx="256" cy="256" r="140" fill="url(#coreGlow)" opacity="0.35" filter="url(#softGlow)" />
+
+  <!-- Outer Interlocking Time-Loop Wings -->
+  <g filter="url(#crystalShadow)">
+    <!-- Bottom Left Loop Arc (Memory Trace) -->
+    <path d="M 170 340 C 120 340 96 295 96 256 C 96 200 140 156 200 156 C 248 156 280 188 312 224 L 272 264 C 248 236 228 212 200 212 C 172 212 152 232 152 256 C 152 276 166 288 188 288 C 212 288 236 272 260 248 L 296 284 C 260 324 218 340 170 340 Z"
+          fill="url(#primaryLoop)" />
+
+    <!-- Top Right Loop Arc (Resumption Forward Trace) -->
+    <path d="M 342 172 C 392 172 416 217 416 256 C 416 312 372 356 312 356 C 264 356 232 324 200 288 L 240 248 C 264 276 284 300 312 300 C 340 300 360 280 360 256 C 360 236 346 224 324 224 C 300 224 276 240 252 264 L 216 228 C 252 188 294 172 342 172 Z"
+          fill="url(#secondaryLoop)" />
+
+    <!-- Central Precision Memory Node (Diamond Crystal) -->
+    <polygon points="256,192 300,256 256,320 212,256" fill="#064E3B" stroke="#34D399" stroke-width="3" />
+    <polygon points="256,204 290,256 256,308 222,256" fill="url(#facetHighlight)" opacity="0.8" />
+    <polygon points="256,220 278,256 256,292 234,256" fill="#ECFDF5" />
+
+    <!-- Modern Clean Alignment Accents -->
+    <circle cx="200" cy="212" r="6" fill="#A7F3D0" />
+    <circle cx="312" cy="300" r="6" fill="#A7F3D0" />
+  </g>
+</svg>
