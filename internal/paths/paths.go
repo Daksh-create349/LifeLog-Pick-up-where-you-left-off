@@ -20,6 +20,7 @@ const (
 	ConfigFile   = "config.json"
 	DatabaseFile = "lifelog.db"
 	LogsDirName  = "logs"
+	SocketFile   = "lifelog.sock"
 
 	// Restrictive file and directory permissions (owner-only access).
 	DirPerm  = 0700
@@ -32,6 +33,7 @@ type Paths struct {
 	Config  string
 	DB      string
 	Logs    string
+	Socket  string
 }
 
 // Resolve resolves the LIFELOG paths using the ambient system environment.
@@ -58,6 +60,7 @@ func ResolveWithEnv(getenv func(string) string) (*Paths, error) {
 		Config:  filepath.Join(dataDir, ConfigFile),
 		DB:      filepath.Join(dataDir, DatabaseFile),
 		Logs:    filepath.Join(dataDir, LogsDirName),
+		Socket:  filepath.Join(dataDir, SocketFile),
 	}, nil
 }
 

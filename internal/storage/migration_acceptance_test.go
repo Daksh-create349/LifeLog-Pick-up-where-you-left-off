@@ -136,8 +136,8 @@ func TestMigration_ForwardFromV5ToV7(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if v != 7 {
-		t.Fatalf("expected migrated schema version 7, got %d", v)
+	if v != 9 {
+		t.Fatalf("expected migrated schema version 9, got %d", v)
 	}
 
 	// 4. Verify existing v5 data is preserved
@@ -297,8 +297,8 @@ func TestMigration_ForwardFromV6ToV7(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if v != 7 {
-		t.Fatalf("expected schema version 7, got %d", v)
+	if v != 9 {
+		t.Fatalf("expected schema version 9, got %d", v)
 	}
 
 	// 4. Verify v6 checkpoint intact
@@ -603,7 +603,7 @@ func TestMigration_RollbackOnFailure(t *testing.T) {
 	defer db.Close()
 
 	v, err := db.SchemaVersion(ctx)
-	if err != nil || v != 7 {
-		t.Fatalf("expected version 7, got %d (err: %v)", v, err)
+	if err != nil || v != 9 {
+		t.Fatalf("expected version 9, got %d (err: %v)", v, err)
 	}
 }

@@ -56,6 +56,8 @@ func Run(args []string, stdout, stderr io.Writer) int {
 			return runExport(args[1:], stdout, stderr)
 		case "checkpoint":
 			return runCheckpoint(args[1:], stdout, stderr)
+		case "daemon":
+			return runDaemon(args[1:], stdout, stderr)
 		}
 	}
 
@@ -110,6 +112,7 @@ func printUsage(w io.Writer) {
 	fmt.Fprintf(w, "  terminal   Record, query, and manage opt-in terminal execution history\n")
 	fmt.Fprintf(w, "  watch      Monitor directory for filesystem events\n")
 	fmt.Fprintf(w, "  events     Query and inspect recorded filesystem events\n")
+	fmt.Fprintf(w, "  daemon     Run supervised local background daemon with secure IPC\n")
 	fmt.Fprintf(w, "  init       Initialize local storage directories and database schema\n")
 	fmt.Fprintf(w, "  status     Display application and storage status\n")
 	fmt.Fprintf(w, "  doctor     Run non-destructive diagnostic checks\n")

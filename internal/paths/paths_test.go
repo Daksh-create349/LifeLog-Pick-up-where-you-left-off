@@ -34,6 +34,9 @@ func TestResolveWithEnv_Override(t *testing.T) {
 	if p.Logs != filepath.Join(temp, paths.LogsDirName) {
 		t.Errorf("got Logs %q, want %q", p.Logs, filepath.Join(temp, paths.LogsDirName))
 	}
+	if p.Socket != filepath.Join(temp, paths.SocketFile) {
+		t.Errorf("got Socket %q, want %q", p.Socket, filepath.Join(temp, paths.SocketFile))
+	}
 }
 
 func TestResolveWithEnv_Default(t *testing.T) {

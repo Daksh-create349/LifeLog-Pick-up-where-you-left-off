@@ -6,7 +6,7 @@ Local-First Computer Memory Engine for macOS. Pick Up Exactly Where You Left Off
 [![Platform](https://img.shields.io/badge/platform-macOS%20(arm64%20%2F%20amd64)-lightgrey)](README.md)
 [![Cgo](https://img.shields.io/badge/cgo-disabled%20(zero%20cgo)-success)](README.md)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![Schema](https://img.shields.io/badge/sqlite%20schema-v7-orange)](internal/storage/storage.go)
+[![Schema](https://img.shields.io/badge/sqlite%20schema-v9-orange)](internal/storage/storage.go)
 
 ---
 
@@ -157,6 +157,24 @@ LIFELOG Doctor Diagnostics
 [PASS] Database Integrity           Integrity OK (schema version 7)
 
 Summary: 6 passed, 0 warning(s), 0 failure(s)
+```
+
+### 4. Desktop Application Development (macOS Shell)
+
+LIFELOG V2 includes an Electron desktop shell built with React, TypeScript, Vite, and Tailwind CSS in `desktop/`, connected to the Go daemon over an authenticated Unix Domain Socket:
+
+```bash
+# Navigate to desktop app directory
+cd desktop
+
+# Install dependencies
+npm install
+
+# Run desktop app in development
+npm run dev
+
+# Run desktop test suite
+npm test
 ```
 
 ---
@@ -377,7 +395,31 @@ Audited on Apple M4 (macOS 15, `darwin/arm64`):
 
 ---
 
-## Database Schema (v7)
+## Desktop Application (V2)
+
+LIFELOG V2 includes an Electron desktop application powered by React, Tailwind CSS, TypeScript, and Lucide icons. The desktop application communicates with the Go core daemon via an authenticated Unix Domain Socket with an ephemeral token.
+
+### Features
+- **Dashboard & Timeline**: Unified cross-domain timeline of file changes, Git commits, terminal commands, application sessions, and system transitions.
+- **Application & System Usage**: Foreground application time tracking, session streams, and system lifecycle tracking (sleep, wake, lock, unlock).
+- **Central Privacy Settings**: Individual granular toggles and status badges for all 6 tracking sources with clear disclosure of what is collected and what is excluded.
+- **Data Management & Retention**: Live database size, record counts, automated retention purge (7d, 30d, 90d, 365d, forever), versioned JSON data export (`lifelog-export-v1`), and selective activity record clearing.
+
+### Packaging macOS Distributables
+
+```bash
+# Package production LifeLog.app, DMG installer, and ZIP archive for macOS arm64
+./scripts/package-macos.sh
+```
+
+Packaged outputs:
+- App Bundle: `desktop/dist-package/LifeLog-darwin-arm64/LifeLog.app`
+- Standalone Installer: `desktop/dist-package/LifeLog-0.2.0-arm64.dmg`
+- Portable Archive: `desktop/dist-package/LifeLog-0.2.0-macOS-arm64.zip`
+
+---
+
+## Database Schema (v9)
 
 The local SQLite database uses WAL mode (`_journal_mode=WAL&_synchronous=NORMAL&_txlock=immediate`) and is managed via forward-only schema migrations:
 
@@ -388,6 +430,8 @@ The local SQLite database uses WAL mode (`_journal_mode=WAL&_synchronous=NORMAL&
 5. `v5_search_index_fts5`: FTS5 `search_index` table and synchronization triggers
 6. `v6_checkpoints`: `checkpoints` table with path index
 7. `v7_fix_search_delete_triggers`: Cascade cleanup triggers for deleted Git repositories, commits, branches, and logs
+8. `v8_app_usage_schema`: `app_sessions` table with active duration tracking and FTS5 triggers
+9. `v9_system_and_data_management`: `system_events`, `browser_domains`, and `system_preferences` tables with FTS5 triggers
 
 ---
 
@@ -425,6 +469,7 @@ The local SQLite database uses WAL mode (`_journal_mode=WAL&_synchronous=NORMAL&
 ├── go.sum                      # Dependency checksums
 ├── main.go                     # Application entry point
 ├── main_test.go                # Subprocess integration & binary acceptance suite
+├── desktop/                    # Electron macOS desktop shell (React, Vite, Tailwind, TS)
 ├── docs/
 │   └── images/
 │       └── watcher-demo.png    # Live filesystem watcher demonstration screenshot
@@ -434,6 +479,7 @@ The local SQLite database uses WAL mode (`_journal_mode=WAL&_synchronous=NORMAL&
     ├── config/                 # Typed config loader, atomic saver, validation
     ├── events/                 # Filesystem event models and validation
     ├── git/                    # Safe read-only Git observer and worktree parser
+    ├── ipc/                    # JSON-RPC 2.0 daemon server over Unix Domain Socket
     ├── paths/                  # macOS Application Support and symlink resolver
     ├── resumption/             # Context synthesis, session clustering, package exporter
     ├── search/                 # FTS query parser, sanitizer, explainable scoring

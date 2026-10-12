@@ -2,6 +2,8 @@
 /lifelog
 /bin/
 /dist/
+/dist-package/
+/desktop/dist-package/
 
 # OS metadata
 .DS_Store

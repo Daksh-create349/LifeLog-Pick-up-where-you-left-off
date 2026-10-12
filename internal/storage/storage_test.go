@@ -37,8 +37,8 @@ func TestStorage_InitAndHealthCheck(t *testing.T) {
 	if err != nil {
 		t.Fatalf("SchemaVersion failed: %v", err)
 	}
-	if version != 7 {
-		t.Errorf("got schema version %d, want 7", version)
+	if version != 9 {
+		t.Errorf("got schema version %d, want 9", version)
 	}
 
 	initAt, err := db.GetMetadata(ctx, "initialized_at")
@@ -107,8 +107,8 @@ func TestStorage_CloseAndReopenPersistence(t *testing.T) {
 	if err != nil {
 		t.Fatalf("SchemaVersion failed: %v", err)
 	}
-	if v != 7 {
-		t.Fatalf("schema version mismatch on reopen: got %d, want 7", v)
+	if v != 9 {
+		t.Fatalf("schema version mismatch on reopen: got %d, want 9", v)
 	}
 
 	evts, err := db2.QueryEvents(ctx, storage.EventFilter{Limit: 10})
@@ -581,12 +581,12 @@ func TestStorage_TerminalOperations(t *testing.T) {
 	}
 }
 
-func TestStorage_MigrationFromSchemaV6ToV7(t *testing.T) {
+func TestStorage_MigrationFromSchemaV6ToV8(t *testing.T) {
 	tempDir := t.TempDir()
-	dbPath := filepath.Join(tempDir, "migrate_v6_v7.db")
+	dbPath := filepath.Join(tempDir, "migrate_v6_v8.db")
 	ctx := context.Background()
 
-	// 1. Create database and verify v7 applied
+	// 1. Create database and verify v8 applied
 	dbRaw, err := storage.Open(dbPath)
 	if err != nil {
 		t.Fatalf("Open failed: %v", err)
@@ -596,8 +596,8 @@ func TestStorage_MigrationFromSchemaV6ToV7(t *testing.T) {
 	if err != nil {
 		t.Fatalf("SchemaVersion failed: %v", err)
 	}
-	if v != 7 {
-		t.Fatalf("expected version 7, got %d", v)
+	if v != 9 {
+		t.Fatalf("expected version 9, got %d", v)
 	}
 	dbRaw.Close()
 
@@ -612,8 +612,8 @@ func TestStorage_MigrationFromSchemaV6ToV7(t *testing.T) {
 	if err != nil {
 		t.Fatalf("SchemaVersion on reopen failed: %v", err)
 	}
-	if vReopen != 7 {
-		t.Fatalf("expected version 7 on reopen, got %d", vReopen)
+	if vReopen != 9 {
+		t.Fatalf("expected version 9 on reopen, got %d", vReopen)
 	}
 }
 

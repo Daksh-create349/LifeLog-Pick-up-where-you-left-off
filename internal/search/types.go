@@ -12,12 +12,15 @@ const (
 	DomainFilesystem Domain = "filesystem"
 	DomainGit        Domain = "git"
 	DomainTerminal   Domain = "terminal"
+	DomainApp        Domain = "app"
+	DomainSystem     Domain = "system"
+	DomainBrowser    Domain = "browser"
 )
 
 // Valid returns true if the domain is supported.
 func (d Domain) Valid() bool {
 	switch d {
-	case DomainAll, DomainFilesystem, DomainGit, DomainTerminal:
+	case DomainAll, DomainFilesystem, DomainGit, DomainTerminal, DomainApp, DomainSystem, DomainBrowser:
 		return true
 	default:
 		return false

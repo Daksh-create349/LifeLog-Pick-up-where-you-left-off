@@ -656,6 +656,102 @@ func (db *DB) migrate(ctx context.Context) error {
 				return nil
 			},
 		},
+		{
+			version: 8,
+			name:    "app_sessions_table",
+			apply: func(ctx context.Context, tx *sql.Tx) error {
+				schema := `
+					CREATE TABLE IF NOT EXISTS app_sessions (
+						id TEXT PRIMARY KEY,
+						app_bundle_id TEXT NOT NULL,
+						app_name TEXT NOT NULL,
+						start_time TIMESTAMP NOT NULL,
+						end_time TIMESTAMP NOT NULL,
+						duration_ms INTEGER NOT NULL CHECK (duration_ms >= 0),
+						is_active BOOLEAN NOT NULL DEFAULT 1,
+						created_at TIMESTAMP NOT NULL
+					);
+					CREATE INDEX IF NOT EXISTS idx_app_sessions_start ON app_sessions(start_time);
+					CREATE INDEX IF NOT EXISTS idx_app_sessions_bundle ON app_sessions(app_bundle_id);
+					CREATE INDEX IF NOT EXISTS idx_app_sessions_name ON app_sessions(app_name);
+					CREATE INDEX IF NOT EXISTS idx_app_sessions_active ON app_sessions(is_active);
+
+					-- Search Index Triggers for app_sessions
+					CREATE TRIGGER IF NOT EXISTS trg_app_sessions_insert AFTER INSERT ON app_sessions BEGIN
+						INSERT INTO search_index(domain, record_id, title, content, working_path, timestamp)
+						VALUES ('app', new.id, new.app_name, new.app_name || ' ' || new.app_bundle_id, new.app_name, new.start_time);
+					END;
+
+					CREATE TRIGGER IF NOT EXISTS trg_app_sessions_update AFTER UPDATE ON app_sessions BEGIN
+						DELETE FROM search_index WHERE domain = 'app' AND record_id = old.id;
+						INSERT INTO search_index(domain, record_id, title, content, working_path, timestamp)
+						VALUES ('app', new.id, new.app_name, new.app_name || ' ' || new.app_bundle_id, new.app_name, new.start_time);
+					END;
+
+					CREATE TRIGGER IF NOT EXISTS trg_app_sessions_delete AFTER DELETE ON app_sessions BEGIN
+						DELETE FROM search_index WHERE domain = 'app' AND record_id = old.id;
+					END;
+				`
+				if _, err := tx.ExecContext(ctx, schema); err != nil {
+					return fmt.Errorf("creating app_sessions table and triggers: %w", err)
+				}
+				return nil
+			},
+		},
+		{
+			version: 9,
+			name:    "system_and_privacy_management",
+			apply: func(ctx context.Context, tx *sql.Tx) error {
+				schema := `
+					CREATE TABLE IF NOT EXISTS system_events (
+						id TEXT PRIMARY KEY,
+						event_type TEXT NOT NULL,
+						timestamp TIMESTAMP NOT NULL,
+						created_at TIMESTAMP NOT NULL
+					);
+					CREATE INDEX IF NOT EXISTS idx_system_events_time ON system_events(timestamp);
+					CREATE INDEX IF NOT EXISTS idx_system_events_type ON system_events(event_type);
+
+					CREATE TRIGGER IF NOT EXISTS trg_system_events_insert AFTER INSERT ON system_events BEGIN
+						INSERT INTO search_index(domain, record_id, title, content, working_path, timestamp)
+						VALUES ('system', new.id, 'System ' || new.event_type, 'System activity: ' || new.event_type, 'system', new.timestamp);
+					END;
+
+					CREATE TRIGGER IF NOT EXISTS trg_system_events_delete AFTER DELETE ON system_events BEGIN
+						DELETE FROM search_index WHERE domain = 'system' AND record_id = old.id;
+					END;
+
+					CREATE TABLE IF NOT EXISTS browser_domains (
+						id TEXT PRIMARY KEY,
+						domain TEXT NOT NULL UNIQUE,
+						visit_count INTEGER NOT NULL DEFAULT 1,
+						last_visited TIMESTAMP NOT NULL,
+						created_at TIMESTAMP NOT NULL
+					);
+					CREATE INDEX IF NOT EXISTS idx_browser_domains_domain ON browser_domains(domain);
+					CREATE INDEX IF NOT EXISTS idx_browser_domains_visited ON browser_domains(last_visited);
+
+					CREATE TRIGGER IF NOT EXISTS trg_browser_domains_insert AFTER INSERT ON browser_domains BEGIN
+						INSERT INTO search_index(domain, record_id, title, content, working_path, timestamp)
+						VALUES ('browser', new.id, new.domain, 'Browser domain: ' || new.domain, new.domain, new.last_visited);
+					END;
+
+					CREATE TRIGGER IF NOT EXISTS trg_browser_domains_delete AFTER DELETE ON browser_domains BEGIN
+						DELETE FROM search_index WHERE domain = 'browser' AND record_id = old.id;
+					END;
+
+					CREATE TABLE IF NOT EXISTS system_preferences (
+						key TEXT PRIMARY KEY,
+						value TEXT NOT NULL,
+						updated_at TIMESTAMP NOT NULL
+					);
+				`
+				if _, err := tx.ExecContext(ctx, schema); err != nil {
+					return fmt.Errorf("creating system_and_privacy tables and triggers: %w", err)
+				}
+				return nil
+			},
+		},
 	}
 
 	for _, m := range migrations {
