@@ -1,0 +1,12 @@
+# Binaries
+/lifelog
+/bin/
+/dist/
+
+# OS metadata
+.DS_Store
+
+# Go test / coverage artifacts
+*.out
+*.test
+coverage.txt
